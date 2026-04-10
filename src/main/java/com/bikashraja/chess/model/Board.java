@@ -35,7 +35,28 @@ public final class Board {
     public static Board initial() {
         Board board = Board.empty();
 
-        // TODO: place all pieces for both sides
+        for (int col = 0; col < 8; col++) {
+            board.setPiece(new Position(6, col), new Piece(PieceType.PAWN, Color.WHITE));
+            board.setPiece(new Position(1, col), new Piece(PieceType.PAWN, Color.BLACK));
+        }
+
+        board.setPiece(new Position(7, 0), new Piece(PieceType.ROOK, Color.WHITE));
+        board.setPiece(new Position(7, 1), new Piece(PieceType.KNIGHT, Color.WHITE));
+        board.setPiece(new Position(7, 2), new Piece(PieceType.BISHOP, Color.WHITE));
+        board.setPiece(new Position(7, 3), new Piece(PieceType.QUEEN, Color.WHITE));
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE));
+        board.setPiece(new Position(7, 5), new Piece(PieceType.BISHOP, Color.WHITE));
+        board.setPiece(new Position(7, 6), new Piece(PieceType.KNIGHT, Color.WHITE));
+        board.setPiece(new Position(7, 7), new Piece(PieceType.ROOK, Color.WHITE));
+
+        board.setPiece(new Position(0, 0), new Piece(PieceType.ROOK, Color.BLACK));
+        board.setPiece(new Position(0, 1), new Piece(PieceType.KNIGHT, Color.BLACK));
+        board.setPiece(new Position(0, 2), new Piece(PieceType.BISHOP, Color.BLACK));
+        board.setPiece(new Position(0, 3), new Piece(PieceType.QUEEN, Color.BLACK));
+        board.setPiece(new Position(0, 4), new Piece(PieceType.KING, Color.BLACK));
+        board.setPiece(new Position(0, 5), new Piece(PieceType.BISHOP, Color.BLACK));
+        board.setPiece(new Position(0, 6), new Piece(PieceType.KNIGHT, Color.BLACK));
+        board.setPiece(new Position(0, 7), new Piece(PieceType.ROOK, Color.BLACK));
 
         return board;
     }
@@ -43,17 +64,24 @@ public final class Board {
     // --- Basic access methods ---
 
     public Piece getPiece(Position pos) {
-        // TODO
-        return null;
+        if (!pos.isValid()) {
+            throw new IllegalArgumentException("Invalid position: " + pos);
+        }
+        return squares[pos.getRow()][pos.getCol()];
     }
 
     public void setPiece(Position pos, Piece piece) {
-        // TODO
+        if (!pos.isValid()) {
+            throw new IllegalArgumentException("Invalid position: " + pos);
+        }
+        squares[pos.getRow()][pos.getCol()] = piece;
     }
 
     public boolean isEmpty(Position pos) {
-        // TODO
-        return false;
+        if (!pos.isValid()) {
+            throw new IllegalArgumentException("Invalid position: " + pos);
+        }
+        return squares[pos.getRow()][pos.getCol()] == null;
     }
 
     // --- Copy ---
