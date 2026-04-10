@@ -1,5 +1,7 @@
 package com.bikashraja.chess.model;
 
+import java.util.Objects;
+
 public class Piece {
 
     private final PieceType type;
@@ -69,6 +71,18 @@ public class Piece {
             case KING   -> "K";
         };
         return color == Color.WHITE ? letter : letter.toLowerCase();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Piece other)) return false;
+        return type == other.type && color == other.color;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, color);
     }
 
     @Override
