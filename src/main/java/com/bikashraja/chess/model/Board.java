@@ -110,9 +110,7 @@ public final class Board {
         Board newBoard = this.copy();
 
         switch (move.getMoveType()) {
-            case NORMAL -> {
-                // TODO
-            }
+            case NORMAL -> newBoard.applyNormalMove(move);
             case PROMOTION -> {
                 // TODO
             }
@@ -130,7 +128,14 @@ public final class Board {
     // --- Helper methods for move handling ---
 
     private void applyNormalMove(Move move) {
-        // TODO
+        Piece movingPiece = getPiece(move.getFrom());
+
+        if (movingPiece == null) {
+            throw new IllegalStateException("No piece at source square: " + move.getFrom());
+        }
+
+        setPiece(move.getFrom(), null);
+        setPiece(move.getTo(), movingPiece);
     }
 
     private void applyPromotion(Move move) {
