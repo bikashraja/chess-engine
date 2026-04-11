@@ -100,4 +100,42 @@ class BoardTest {
         assertEquals(new Piece(PieceType.PAWN, Color.WHITE), original.getPiece(new Position(6, 4)));
         assertNull(copy.getPiece(new Position(6, 4)));
     }
+
+    @Test
+    void testMakeMove_normalMove_movesPieceCorrectly() {
+        Board board = Board.initial();
+        Move move = Move.normal(new Position(6, 4), new Position(4, 4)); // e2 -> e4
+
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(6, 4)));
+        assertEquals(new Piece(PieceType.PAWN, Color.WHITE), newBoard.getPiece(new Position(4, 4)));
+    }
+
+    @Test
+    void testMakeMove_normalMove_doesNotModifyOriginalBoard() {
+        Board board = Board.initial();
+        Move move = Move.normal(new Position(6, 4), new Position(4, 4)); // e2 -> e4
+
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertEquals(new Piece(PieceType.PAWN, Color.WHITE), board.getPiece(new Position(6, 4)));
+        assertNull(board.getPiece(new Position(4, 4)));
+
+        assertNull(newBoard.getPiece(new Position(6, 4)));
+        assertEquals(new Piece(PieceType.PAWN, Color.WHITE), newBoard.getPiece(new Position(4, 4)));
+    }
+
+    @Test
+    void testMakeMove_normalCapture_replacesTargetPiece() {
+        Board board = Board.empty();
+        board.setPiece(new Position(4, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e4
+        board.setPiece(new Position(3, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d5
+
+        Move move = Move.normal(new Position(4, 4), new Position(3, 3));
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(4, 4)));
+        assertEquals(new Piece(PieceType.PAWN, Color.WHITE), newBoard.getPiece(new Position(3, 3)));
+    }
 }
