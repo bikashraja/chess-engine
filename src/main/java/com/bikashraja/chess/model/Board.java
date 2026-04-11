@@ -91,8 +91,13 @@ public final class Board {
      * The Piece objects themselves can be reused (immutable).
      */
     public Board copy() {
-        // TODO
-        return null;
+        Piece[][] copiedSquares = new Piece[8][8];
+
+        for (int row = 0; row < 8; row++) {
+            System.arraycopy(this.squares[row], 0, copiedSquares[row], 0, 8);
+        }
+
+        return new Board(copiedSquares);
     }
 
     // --- Move application ---
