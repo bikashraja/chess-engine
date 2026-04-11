@@ -75,4 +75,29 @@ class BoardTest {
 
         assertFalse(board.isEmpty(new Position(7, 4)));
     }
+
+    @Test
+    void testCopy_copiedBoardHasSamePieces() {
+        Board original = Board.initial();
+
+        Board copy = original.copy();
+
+        assertEquals(original.getPiece(new Position(7, 0)), copy.getPiece(new Position(7, 0)));
+        assertEquals(original.getPiece(new Position(7, 4)), copy.getPiece(new Position(7, 4)));
+        assertEquals(original.getPiece(new Position(6, 3)), copy.getPiece(new Position(6, 3)));
+        assertEquals(original.getPiece(new Position(1, 6)), copy.getPiece(new Position(1, 6)));
+        assertEquals(original.getPiece(new Position(0, 3)), copy.getPiece(new Position(0, 3)));
+        assertEquals(original.getPiece(new Position(4, 4)), copy.getPiece(new Position(4, 4)));
+    }
+
+    @Test
+    void testCopy_modifyingCopiedBoardDoesNotAffectOriginal() {
+        Board original = Board.initial();
+
+        Board copy = original.copy();
+        copy.setPiece(new Position(6, 4), null); // remove white pawn from e2 in copy
+
+        assertEquals(new Piece(PieceType.PAWN, Color.WHITE), original.getPiece(new Position(6, 4)));
+        assertNull(copy.getPiece(new Position(6, 4)));
+    }
 }
