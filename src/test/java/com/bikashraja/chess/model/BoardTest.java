@@ -257,4 +257,49 @@ class BoardTest {
         assertEquals(new Piece(PieceType.KING, Color.WHITE), newBoard.getPiece(new Position(7, 6)));
         assertEquals(new Piece(PieceType.ROOK, Color.WHITE), newBoard.getPiece(new Position(7, 5)));
     }
+
+    @Test
+    void testMakeMove_whiteEnPassant_movesPawnAndRemovesCapturedPawn() {
+        Board board = Board.empty();
+        board.setPiece(new Position(3, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e5
+        board.setPiece(new Position(3, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d5
+
+        Move move = Move.enPassant(new Position(3, 4), new Position(2, 3)); // e5 -> d6
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(3, 4)));
+        assertNull(newBoard.getPiece(new Position(3, 3)));
+        assertEquals(new Piece(PieceType.PAWN, Color.WHITE), newBoard.getPiece(new Position(2, 3)));
+    }
+
+    @Test
+    void testMakeMove_blackEnPassant_movesPawnAndRemovesCapturedPawn() {
+        Board board = Board.empty();
+        board.setPiece(new Position(4, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d4
+        board.setPiece(new Position(4, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e4
+
+        Move move = Move.enPassant(new Position(4, 3), new Position(5, 4)); // d4 -> e3
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(4, 3)));
+        assertNull(newBoard.getPiece(new Position(4, 4)));
+        assertEquals(new Piece(PieceType.PAWN, Color.BLACK), newBoard.getPiece(new Position(5, 4)));
+    }
+
+    @Test
+    void testMakeMove_enPassant_doesNotModifyOriginalBoard() {
+        Board board = Board.empty();
+        board.setPiece(new Position(3, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e5
+        board.setPiece(new Position(3, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d5
+
+        Move move = Move.enPassant(new Position(3, 4), new Position(2, 3)); // e5 -> d6
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertEquals(new Piece(PieceType.PAWN, Color.WHITE), board.getPiece(new Position(3, 4)));
+        assertEquals(new Piece(PieceType.PAWN, Color.BLACK), board.getPiece(new Position(3, 3)));
+
+        assertNull(newBoard.getPiece(new Position(3, 4)));
+        assertNull(newBoard.getPiece(new Position(3, 3)));
+        assertEquals(new Piece(PieceType.PAWN, Color.WHITE), newBoard.getPiece(new Position(2, 3)));
+    }
 }
