@@ -181,4 +181,80 @@ class BoardTest {
 
         assertNull(newBoard.getPiece(new Position(1, 4)));
     }
+
+    @Test
+    void testMakeMove_whiteKingSideCastling_movesKingAndRookCorrectly() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE)); // e1
+        board.setPiece(new Position(7, 7), new Piece(PieceType.ROOK, Color.WHITE)); // h1
+
+        Move move = Move.castling(new Position(7, 4), new Position(7, 6)); // e1 -> g1
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(7, 4)));
+        assertNull(newBoard.getPiece(new Position(7, 7)));
+        assertEquals(new Piece(PieceType.KING, Color.WHITE), newBoard.getPiece(new Position(7, 6)));
+        assertEquals(new Piece(PieceType.ROOK, Color.WHITE), newBoard.getPiece(new Position(7, 5)));
+    }
+
+    @Test
+    void testMakeMove_whiteQueenSideCastling_movesKingAndRookCorrectly() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE)); // e1
+        board.setPiece(new Position(7, 0), new Piece(PieceType.ROOK, Color.WHITE)); // a1
+
+        Move move = Move.castling(new Position(7, 4), new Position(7, 2)); // e1 -> c1
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(7, 4)));
+        assertNull(newBoard.getPiece(new Position(7, 0)));
+        assertEquals(new Piece(PieceType.KING, Color.WHITE), newBoard.getPiece(new Position(7, 2)));
+        assertEquals(new Piece(PieceType.ROOK, Color.WHITE), newBoard.getPiece(new Position(7, 3)));
+    }
+
+    @Test
+    void testMakeMove_blackKingSideCastling_movesKingAndRookCorrectly() {
+        Board board = Board.empty();
+        board.setPiece(new Position(0, 4), new Piece(PieceType.KING, Color.BLACK)); // e8
+        board.setPiece(new Position(0, 7), new Piece(PieceType.ROOK, Color.BLACK)); // h8
+
+        Move move = Move.castling(new Position(0, 4), new Position(0, 6)); // e8 -> g8
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(0, 4)));
+        assertNull(newBoard.getPiece(new Position(0, 7)));
+        assertEquals(new Piece(PieceType.KING, Color.BLACK), newBoard.getPiece(new Position(0, 6)));
+        assertEquals(new Piece(PieceType.ROOK, Color.BLACK), newBoard.getPiece(new Position(0, 5)));
+    }
+
+    @Test
+    void testMakeMove_blackQueenSideCastling_movesKingAndRookCorrectly() {
+        Board board = Board.empty();
+        board.setPiece(new Position(0, 4), new Piece(PieceType.KING, Color.BLACK)); // e8
+        board.setPiece(new Position(0, 0), new Piece(PieceType.ROOK, Color.BLACK)); // a8
+
+        Move move = Move.castling(new Position(0, 4), new Position(0, 2)); // e8 -> c8
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(0, 4)));
+        assertNull(newBoard.getPiece(new Position(0, 0)));
+        assertEquals(new Piece(PieceType.KING, Color.BLACK), newBoard.getPiece(new Position(0, 2)));
+        assertEquals(new Piece(PieceType.ROOK, Color.BLACK), newBoard.getPiece(new Position(0, 3)));
+    }
+
+    @Test
+    void testMakeMove_castling_doesNotModifyOriginalBoard() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE)); // e1
+        board.setPiece(new Position(7, 7), new Piece(PieceType.ROOK, Color.WHITE)); // h1
+
+        Move move = Move.castling(new Position(7, 4), new Position(7, 6)); // e1 -> g1
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertEquals(new Piece(PieceType.KING, Color.WHITE), board.getPiece(new Position(7, 4)));
+        assertEquals(new Piece(PieceType.ROOK, Color.WHITE), board.getPiece(new Position(7, 7)));
+
+        assertEquals(new Piece(PieceType.KING, Color.WHITE), newBoard.getPiece(new Position(7, 6)));
+        assertEquals(new Piece(PieceType.ROOK, Color.WHITE), newBoard.getPiece(new Position(7, 5)));
+    }
 }
