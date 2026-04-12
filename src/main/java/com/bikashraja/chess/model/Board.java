@@ -111,9 +111,7 @@ public final class Board {
 
         switch (move.getMoveType()) {
             case NORMAL -> newBoard.applyNormalMove(move);
-            case PROMOTION -> {
-                // TODO
-            }
+            case PROMOTION -> newBoard.applyPromotion(move);
             case CASTLING -> {
                 // TODO
             }
@@ -139,7 +137,16 @@ public final class Board {
     }
 
     private void applyPromotion(Move move) {
-        // TODO
+        Piece pawn = getPiece(move.getFrom());
+
+        if (pawn == null) {
+            throw new IllegalStateException("No piece at source square: " + move.getFrom());
+        }
+
+        Piece promotedPiece = new Piece(move.getPromotion(), pawn.getColor());
+
+        setPiece(move.getFrom(), null);
+        setPiece(move.getTo(), promotedPiece);
     }
 
     private void applyCastling(Move move) {
