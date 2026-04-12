@@ -112,9 +112,7 @@ public final class Board {
         switch (move.getMoveType()) {
             case NORMAL -> newBoard.applyNormalMove(move);
             case PROMOTION -> newBoard.applyPromotion(move);
-            case CASTLING -> {
-                // TODO
-            }
+            case CASTLING -> newBoard.applyCastling(move);
             case EN_PASSANT -> {
                 // TODO
             }
@@ -150,7 +148,42 @@ public final class Board {
     }
 
     private void applyCastling(Move move) {
-        // TODO
+        Piece king = getPiece(move.getFrom());
+
+        if (king == null) {
+            throw new IllegalStateException("No king at source square: " + move.getFrom());
+        }
+
+        int row = move.getFrom().getRow();
+        int fromCol = move.getFrom().getCol();
+        int toCol = move.getTo().getCol();
+
+        boolean kingSide = toCol > fromCol;
+
+        Position rookFrom;
+        Position rookTo;
+
+        if (kingSide) {
+            rookFrom = new Position(row, 7);
+            rookTo = new Position(row, 5);
+        } else {
+            rookFrom = new Position(row, 0);
+            rookTo = new Position(row, 3);
+        }
+
+        Piece rook = getPiece(rookFrom);
+
+        if (rook == null) {
+            throw new IllegalStateException("No rook found for castling at: " + rookFrom);
+        }
+
+        // Move king
+        setPiece(move.getFrom(), null);
+        setPiece(move.getTo(), king);
+
+        // Move rook
+        setPiece(rookFrom, null);
+        setPiece(rookTo, rook);
     }
 
     private void applyEnPassant(Move move) {
