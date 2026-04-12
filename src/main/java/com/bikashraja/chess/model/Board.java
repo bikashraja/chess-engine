@@ -113,9 +113,7 @@ public final class Board {
             case NORMAL -> newBoard.applyNormalMove(move);
             case PROMOTION -> newBoard.applyPromotion(move);
             case CASTLING -> newBoard.applyCastling(move);
-            case EN_PASSANT -> {
-                // TODO
-            }
+            case EN_PASSANT -> newBoard.applyEnPassant(move);
         }
 
         return newBoard;
@@ -187,7 +185,20 @@ public final class Board {
     }
 
     private void applyEnPassant(Move move) {
-        // TODO
+        Piece pawn = getPiece(move.getFrom());
+
+        if (pawn == null) {
+            throw new IllegalStateException("No pawn at source square: " + move.getFrom());
+        }
+
+        Position capturedPawnPos = new Position(
+                move.getFrom().getRow(),
+                move.getTo().getCol()
+        );
+
+        setPiece(move.getFrom(), null);
+        setPiece(capturedPawnPos, null);
+        setPiece(move.getTo(), pawn);
     }
 
     @Override
