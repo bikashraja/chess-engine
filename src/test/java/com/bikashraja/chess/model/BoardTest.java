@@ -138,4 +138,47 @@ class BoardTest {
         assertNull(newBoard.getPiece(new Position(4, 4)));
         assertEquals(new Piece(PieceType.PAWN, Color.WHITE), newBoard.getPiece(new Position(3, 3)));
     }
+
+    @Test
+    void testMakeMove_promotion_replacesPawnWithPromotedPiece() {
+        Board board = Board.empty();
+        board.setPiece(new Position(1, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e7
+
+        Move move = Move.promotion(
+                new Position(1, 4),
+                new Position(0, 4),
+                PieceType.QUEEN
+        );
+
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertNull(newBoard.getPiece(new Position(1, 4)));
+        assertEquals(
+                new Piece(PieceType.QUEEN, Color.WHITE),
+                newBoard.getPiece(new Position(0, 4))
+        );
+    }
+
+    @Test
+    void testMakeMove_promotion_doesNotModifyOriginalBoard() {
+        Board board = Board.empty();
+        board.setPiece(new Position(1, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e7
+
+        Move move = Move.promotion(
+                new Position(1, 4),
+                new Position(0, 4),
+                PieceType.QUEEN
+        );
+
+        Board newBoard = board.makeMove(move, GameState.initial());
+
+        assertEquals(
+                new Piece(PieceType.PAWN, Color.WHITE),
+                board.getPiece(new Position(1, 4))
+        );
+
+        assertNull(board.getPiece(new Position(0, 4)));
+
+        assertNull(newBoard.getPiece(new Position(1, 4)));
+    }
 }
