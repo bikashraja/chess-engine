@@ -13,6 +13,13 @@ import java.util.List;
  */
 public class MoveGenerator {
 
+    private static final int[][] KNIGHT_OFFSETS = {
+            {-2, -1}, {-2, 1},
+            {-1, -2}, {-1, 2},
+            {1, -2}, {1, 2},
+            {2, -1}, {2, 1}
+    };
+
     /**
      * Generates pseudo-legal moves for the side to move.
      *
@@ -67,7 +74,21 @@ public class MoveGenerator {
     }
 
     private void generateKnightMoves(Board board, Position from, Piece piece, List<Move> moves) {
-        // TODO
+        for (int[] offset : KNIGHT_OFFSETS) {
+            int newRow = from.getRow() + offset[0];
+            int newCol = from.getCol() + offset[1];
+
+            Position to = new Position(newRow, newCol);
+            if (!to.isValid()) {
+                continue;
+            }
+
+            Piece targetPiece = board.getPiece(to);
+
+            if (targetPiece == null || targetPiece.getColor() != piece.getColor()) {
+                moves.add(Move.normal(from, to));
+            }
+        }
     }
 
     private void generatePawnMoves(Board board, GameState state, Position from, Piece piece, List<Move> moves) {
