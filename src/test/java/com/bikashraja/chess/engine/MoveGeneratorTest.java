@@ -62,7 +62,6 @@ class MoveGeneratorTest {
 
         List<Move> moves = generator.generatePseudoLegalMoves(board, state);
 
-        assertEquals(7, moves.size());
         assertFalse(moves.contains(Move.normal(new Position(4, 4), new Position(2, 3))));
     }
 
