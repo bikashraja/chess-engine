@@ -79,4 +79,48 @@ class MoveGeneratorTest {
         assertEquals(8, moves.size());
         assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(2, 3))));
     }
+
+    @Test
+    void testGeneratePseudoLegalMoves_whitePawn_generatesSingleAndDoubleForwardMoves() {
+        Board board = Board.empty();
+        board.setPiece(new Position(6, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e2
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertTrue(moves.contains(Move.normal(new Position(6, 4), new Position(5, 4)))); // e2 -> e3
+        assertTrue(moves.contains(Move.normal(new Position(6, 4), new Position(4, 4)))); // e2 -> e4
+    }
+
+    @Test
+    void testGeneratePseudoLegalMoves_whitePawn_generatesPromotionMoves() {
+        Board board = Board.empty();
+        board.setPiece(new Position(1, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e7
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertTrue(moves.contains(Move.promotion(new Position(1, 4), new Position(0, 4), PieceType.QUEEN)));
+        assertTrue(moves.contains(Move.promotion(new Position(1, 4), new Position(0, 4), PieceType.ROOK)));
+        assertTrue(moves.contains(Move.promotion(new Position(1, 4), new Position(0, 4), PieceType.BISHOP)));
+        assertTrue(moves.contains(Move.promotion(new Position(1, 4), new Position(0, 4), PieceType.KNIGHT)));
+    }
+
+    @Test
+    void testGeneratePseudoLegalMoves_blackPawn_generatesSingleAndDoubleForwardMoves() {
+        Board board = Board.empty();
+        board.setPiece(new Position(1, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d7
+
+        GameState state = new GameState(Color.BLACK, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertTrue(moves.contains(Move.normal(new Position(1, 3), new Position(2, 3)))); // d7 -> d6
+        assertTrue(moves.contains(Move.normal(new Position(1, 3), new Position(3, 3)))); // d7 -> d5
+    }
 }
