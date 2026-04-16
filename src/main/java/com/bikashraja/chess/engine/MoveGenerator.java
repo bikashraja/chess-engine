@@ -92,6 +92,47 @@ public class MoveGenerator {
     }
 
     private void generatePawnMoves(Board board, GameState state, Position from, Piece piece, List<Move> moves) {
-        // TODO
+        int direction = piece.getColor() == Color.WHITE ? -1 : 1;
+        int startRow = piece.getColor() == Color.WHITE ? 6 : 1;
+        int promotionRow = piece.getColor() == Color.WHITE ? 0 : 7;
+
+        int fromRow = from.getRow();
+        int fromCol = from.getCol();
+
+        int oneStepRow = fromRow + direction;
+
+        // One-square forward move
+        if (isInsideBoard(oneStepRow, fromCol)) {
+            Position oneStep = new Position(oneStepRow, fromCol);
+
+            if (board.isEmpty(oneStep)) {
+                if (oneStepRow == promotionRow) {
+                    addPromotionMoves(from, oneStep, moves);
+                } else {
+                    moves.add(Move.normal(from, oneStep));
+                }
+
+                // Two-square forward move
+                int twoStepRow = fromRow + 2 * direction;
+                if (fromRow == startRow && isInsideBoard(twoStepRow, fromCol)) {
+                    Position twoStep = new Position(twoStepRow, fromCol);
+
+                    if (board.isEmpty(twoStep)) {
+                        moves.add(Move.normal(from, twoStep));
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isInsideBoard(int row, int col) {
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    }
+
+    private void addPromotionMoves(Position from, Position to, List<Move> moves) {
+        moves.add(Move.promotion(from, to, PieceType.QUEEN));
+        moves.add(Move.promotion(from, to, PieceType.ROOK));
+        moves.add(Move.promotion(from, to, PieceType.BISHOP));
+        moves.add(Move.promotion(from, to, PieceType.KNIGHT));
     }
 }
