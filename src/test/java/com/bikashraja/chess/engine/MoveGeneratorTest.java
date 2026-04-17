@@ -111,6 +111,37 @@ class MoveGeneratorTest {
     }
 
     @Test
+    void testGeneratePseudoLegalMoves_whitePawn_generatesDiagonalCapture() {
+        Board board = Board.empty();
+        board.setPiece(new Position(4, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e4
+        board.setPiece(new Position(3, 3), new Piece(PieceType.KNIGHT, Color.BLACK)); // d5
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(3, 3)))); // e4 x d5
+    }
+
+    @Test
+    void testGeneratePseudoLegalMoves_whitePawn_generatesEnPassantMove() {
+        Board board = Board.empty();
+        board.setPiece(new Position(3, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e5
+
+        GameState state = new GameState(
+                Color.WHITE,
+                false, false, false, false,
+                new Position(2, 3) // d6
+        );
+
+        MoveGenerator generator = new MoveGenerator();
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertTrue(moves.contains(Move.enPassant(new Position(3, 4), new Position(2, 3)))); // e5 -> d6 e.p.
+    }
+
+    @Test
     void testGeneratePseudoLegalMoves_blackPawn_generatesSingleAndDoubleForwardMoves() {
         Board board = Board.empty();
         board.setPiece(new Position(1, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d7
