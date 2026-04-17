@@ -123,6 +123,35 @@ public class MoveGenerator {
                 }
             }
         }
+
+        // Diagonal captures + en passant
+        int[] captureCols = {fromCol - 1, fromCol + 1};
+
+        for (int targetCol : captureCols) {
+            int targetRow = fromRow + direction;
+
+            if (!isInsideBoard(targetRow, targetCol)) {
+                continue;
+            }
+
+            Position target = new Position(targetRow, targetCol);
+            Piece targetPiece = board.getPiece(target);
+
+            // Normal diagonal capture
+            if (targetPiece != null && targetPiece.getColor() != piece.getColor()) {
+                if (targetRow == promotionRow) {
+                    addPromotionMoves(from, target, moves);
+                } else {
+                    moves.add(Move.normal(from, target));
+                }
+            }
+
+            // En passant
+            Position enPassantTarget = state.getEnPassantTarget();
+            if (enPassantTarget != null && enPassantTarget.equals(target)) {
+                moves.add(Move.enPassant(from, target));
+            }
+        }
     }
 
     private boolean isInsideBoard(int row, int col) {
