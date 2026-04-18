@@ -20,6 +20,23 @@ public class MoveGenerator {
             {2, -1}, {2, 1}
     };
 
+    private static final int[][] BISHOP_DIRECTIONS = {
+            {-1, -1}, {-1, 1},
+            {1, -1}, {1, 1}
+    };
+
+    private static final int[][] ROOK_DIRECTIONS = {
+            {-1, 0}, {1, 0},
+            {0, -1}, {0, 1}
+    };
+
+    private static final int[][] QUEEN_DIRECTIONS = {
+            {-1, -1}, {-1, 1},
+            {1, -1}, {1, 1},
+            {-1, 0}, {1, 0},
+            {0, -1}, {0, 1}
+    };
+
     /**
      * Generates pseudo-legal moves for the side to move.
      *
@@ -62,15 +79,15 @@ public class MoveGenerator {
     }
 
     private void generateQueenMoves(Board board, Position from, Piece piece, List<Move> moves) {
-        // TODO
+        generateSlidingMoves(board, from, piece, moves, QUEEN_DIRECTIONS);
     }
 
     private void generateRookMoves(Board board, Position from, Piece piece, List<Move> moves) {
-        // TODO
+        generateSlidingMoves(board, from, piece, moves, ROOK_DIRECTIONS);
     }
 
     private void generateBishopMoves(Board board, Position from, Piece piece, List<Move> moves) {
-        // TODO
+        generateSlidingMoves(board, from, piece, moves, BISHOP_DIRECTIONS);
     }
 
     private void generateKnightMoves(Board board, Position from, Piece piece, List<Move> moves) {
@@ -163,5 +180,29 @@ public class MoveGenerator {
         moves.add(Move.promotion(from, to, PieceType.ROOK));
         moves.add(Move.promotion(from, to, PieceType.BISHOP));
         moves.add(Move.promotion(from, to, PieceType.KNIGHT));
+    }
+
+    private void generateSlidingMoves(Board board, Position from, Piece piece, List<Move> moves, int[][] directions) {
+        for (int[] direction : directions) {
+            int row = from.getRow() + direction[0];
+            int col = from.getCol() + direction[1];
+
+            while (isInsideBoard(row, col)) {
+                Position to = new Position(row, col);
+                Piece targetPiece = board.getPiece(to);
+
+                if (targetPiece == null) {
+                    moves.add(Move.normal(from, to));
+                } else {
+                    if (targetPiece.getColor() != piece.getColor()) {
+                        moves.add(Move.normal(from, to));
+                    }
+                    break;
+                }
+
+                row += direction[0];
+                col += direction[1];
+            }
+        }
     }
 }
