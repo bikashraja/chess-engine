@@ -20,6 +20,12 @@ public class MoveGenerator {
             {2, -1}, {2, 1}
     };
 
+    private static final int[][] KING_OFFSETS = {
+            {-1, -1}, {-1, 0}, {-1, 1},
+            {0, -1},           {0, 1},
+            {1, -1},  {1, 0},  {1, 1}
+    };
+
     private static final int[][] BISHOP_DIRECTIONS = {
             {-1, -1}, {-1, 1},
             {1, -1}, {1, 1}
@@ -75,7 +81,58 @@ public class MoveGenerator {
     }
 
     private void generateKingMoves(Board board, GameState state, Position from, Piece piece, List<Move> moves) {
-        // TODO
+        for (int[] offset : KING_OFFSETS) {
+            int newRow = from.getRow() + offset[0];
+            int newCol = from.getCol() + offset[1];
+
+            if (!isInsideBoard(newRow, newCol)) {
+                continue;
+            }
+
+            Position to = new Position(newRow, newCol);
+            Piece targetPiece = board.getPiece(to);
+
+            if (targetPiece == null || targetPiece.getColor() != piece.getColor()) {
+                moves.add(Move.normal(from, to));
+            }
+        }
+
+        addCastlingMoves(board, state, from, piece, moves);
+    }
+
+    private void addCastlingMoves(Board board, GameState state, Position from, Piece piece, List<Move> moves) {
+        int homeRow = piece.getColor() == Color.WHITE ? 7 : 0;
+
+        if (from.getRow() != homeRow || from.getCol() != 4) {
+            return;
+        }
+
+        if (state.canCastleKingSide(piece.getColor())
+                && canCastleThrough(board, piece, homeRow, 5, 6, 7)) {
+            moves.add(Move.castling(from, new Position(homeRow, 6)));
+        }
+
+        if (state.canCastleQueenSide(piece.getColor())
+                && canCastleThrough(board, piece, homeRow, 1, 3, 0)) {
+            moves.add(Move.castling(from, new Position(homeRow, 2)));
+        }
+    }
+
+    private boolean canCastleThrough(Board board, Piece king, int row, int clearFromCol, int clearToCol, int rookCol) {
+        Position rookPosition = new Position(row, rookCol);
+        Piece rook = board.getPiece(rookPosition);
+
+        if (rook == null || rook.getType() != PieceType.ROOK || rook.getColor() != king.getColor()) {
+            return false;
+        }
+
+        for (int col = clearFromCol; col <= clearToCol; col++) {
+            if (!board.isEmpty(new Position(row, col))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void generateQueenMoves(Board board, Position from, Piece piece, List<Move> moves) {
