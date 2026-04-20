@@ -81,6 +81,86 @@ class MoveGeneratorTest {
     }
 
     @Test
+    void testGeneratePseudoLegalMoves_kingInCenter_generatesEightMoves() {
+        Board board = Board.empty();
+        board.setPiece(new Position(4, 4), new Piece(PieceType.KING, Color.WHITE));
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertEquals(8, moves.size());
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(3, 3))));
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(3, 4))));
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(3, 5))));
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(4, 3))));
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(4, 5))));
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(5, 3))));
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(5, 4))));
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(5, 5))));
+    }
+
+    @Test
+    void testGeneratePseudoLegalMoves_kingBlockedByOwnPiece_doesNotGenerateBlockedMove() {
+        Board board = Board.empty();
+        board.setPiece(new Position(4, 4), new Piece(PieceType.KING, Color.WHITE));
+        board.setPiece(new Position(3, 3), new Piece(PieceType.PAWN, Color.WHITE));
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertFalse(moves.contains(Move.normal(new Position(4, 4), new Position(3, 3))));
+    }
+
+    @Test
+    void testGeneratePseudoLegalMoves_kingCanCaptureEnemyPiece_generatesCaptureMove() {
+        Board board = Board.empty();
+        board.setPiece(new Position(4, 4), new Piece(PieceType.KING, Color.WHITE));
+        board.setPiece(new Position(3, 3), new Piece(PieceType.PAWN, Color.BLACK));
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(3, 3))));
+    }
+
+    @Test
+    void testGeneratePseudoLegalMoves_whiteKing_canCastleBothSidesWhenPathClear() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE));
+        board.setPiece(new Position(7, 0), new Piece(PieceType.ROOK, Color.WHITE));
+        board.setPiece(new Position(7, 7), new Piece(PieceType.ROOK, Color.WHITE));
+
+        GameState state = new GameState(Color.WHITE, true, true, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertTrue(moves.contains(Move.castling(new Position(7, 4), new Position(7, 6))));
+        assertTrue(moves.contains(Move.castling(new Position(7, 4), new Position(7, 2))));
+    }
+
+    @Test
+    void testGeneratePseudoLegalMoves_kingDoesNotCastleThroughOccupiedSquare() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE));
+        board.setPiece(new Position(7, 7), new Piece(PieceType.ROOK, Color.WHITE));
+        board.setPiece(new Position(7, 5), new Piece(PieceType.BISHOP, Color.WHITE));
+
+        GameState state = new GameState(Color.WHITE, true, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> moves = generator.generatePseudoLegalMoves(board, state);
+
+        assertFalse(moves.contains(Move.castling(new Position(7, 4), new Position(7, 6))));
+    }
+
+    @Test
     void testGeneratePseudoLegalMoves_whitePawn_generatesSingleAndDoubleForwardMoves() {
         Board board = Board.empty();
         board.setPiece(new Position(6, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e2
