@@ -69,6 +69,28 @@ public class MoveGenerator {
         return moves;
     }
 
+    /**
+     * Generates fully legal moves for the side to move.
+     *
+     * A move is legal if it is pseudo-legal and does not leave the moving side's
+     * king in check after the move is applied.
+     */
+    public List<Move> generateLegalMoves(Board board, GameState state) {
+        List<Move> legalMoves = new ArrayList<>();
+        List<Move> pseudoLegalMoves = generatePseudoLegalMoves(board, state);
+        Color movingColor = state.getSideToMove();
+
+        for (Move move : pseudoLegalMoves) {
+            Board newBoard = board.makeMove(move, state);
+
+            if (!isKingInCheck(newBoard, movingColor)) {
+                legalMoves.add(move);
+            }
+        }
+
+        return legalMoves;
+    }
+
     private void generatePieceMoves(Board board, GameState state, Position from, Piece piece, List<Move> moves) {
         switch (piece.getType()) {
             case PAWN -> generatePawnMoves(board, state, from, piece, moves);
@@ -261,5 +283,133 @@ public class MoveGenerator {
                 col += direction[1];
             }
         }
+    }
+
+    public boolean isKingInCheck(Board board, Color color) {
+        Position kingPosition = findKing(board, color);
+        if (kingPosition == null) {
+            throw new IllegalStateException("King not found for color: " + color);
+        }
+
+        Color attackerColor = color == Color.WHITE ? Color.BLACK : Color.WHITE;
+        return isSquareAttacked(board, kingPosition, attackerColor);
+    }
+
+    private Position findKing(Board board, Color color) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Position position = new Position(row, col);
+                Piece piece = board.getPiece(position);
+
+                if (piece != null
+                        && piece.getType() == PieceType.KING
+                        && piece.getColor() == color) {
+                    return position;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isSquareAttacked(Board board, Position square, Color attackerColor) {
+        return isAttackedByPawn(board, square, attackerColor)
+                || isAttackedByKnight(board, square, attackerColor)
+                || isAttackedBySlidingPieces(board, square, attackerColor)
+                || isAttackedByKing(board, square, attackerColor);
+    }
+
+    private boolean isAttackedByPawn(Board board, Position square, Color attackerColor) {
+        int targetRow = square.getRow();
+        int targetCol = square.getCol();
+
+        int attackerRow = attackerColor == Color.WHITE ? targetRow + 1 : targetRow - 1;
+        int[] attackerCols = {targetCol - 1, targetCol + 1};
+
+        for (int attackerCol : attackerCols) {
+            if (!isInsideBoard(attackerRow, attackerCol)) {
+                continue;
+            }
+
+            Piece piece = board.getPiece(new Position(attackerRow, attackerCol));
+            if (piece != null
+                    && piece.getType() == PieceType.PAWN
+                    && piece.getColor() == attackerColor) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isAttackedByKnight(Board board, Position square, Color attackerColor) {
+        for (int[] offset : KNIGHT_OFFSETS) {
+            int row = square.getRow() + offset[0];
+            int col = square.getCol() + offset[1];
+
+            if (!isInsideBoard(row, col)) {
+                continue;
+            }
+
+            Piece piece = board.getPiece(new Position(row, col));
+            if (piece != null
+                    && piece.getType() == PieceType.KNIGHT
+                    && piece.getColor() == attackerColor) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isAttackedBySlidingPieces(Board board, Position square, Color attackerColor) {
+        return isAttackedInDirections(board, square, attackerColor, BISHOP_DIRECTIONS, PieceType.BISHOP, PieceType.QUEEN)
+                || isAttackedInDirections(board, square, attackerColor, ROOK_DIRECTIONS, PieceType.ROOK, PieceType.QUEEN);
+    }
+
+    private boolean isAttackedInDirections(Board board, Position square, Color attackerColor, int[][] directions,
+                                           PieceType primaryType, PieceType secondaryType) {
+        for (int[] direction : directions) {
+            int row = square.getRow() + direction[0];
+            int col = square.getCol() + direction[1];
+
+            while (isInsideBoard(row, col)) {
+                Piece piece = board.getPiece(new Position(row, col));
+
+                if (piece == null) {
+                    row += direction[0];
+                    col += direction[1];
+                    continue;
+                }
+
+                if (piece.getColor() != attackerColor) {
+                    break;
+                }
+
+                return piece.getType() == primaryType || piece.getType() == secondaryType;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isAttackedByKing(Board board, Position square, Color attackerColor) {
+        for (int[] offset : KING_OFFSETS) {
+            int row = square.getRow() + offset[0];
+            int col = square.getCol() + offset[1];
+
+            if (!isInsideBoard(row, col)) {
+                continue;
+            }
+
+            Piece piece = board.getPiece(new Position(row, col));
+            if (piece != null
+                    && piece.getType() == PieceType.KING
+                    && piece.getColor() == attackerColor) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
