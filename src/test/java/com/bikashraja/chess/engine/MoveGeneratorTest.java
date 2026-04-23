@@ -362,4 +362,71 @@ class MoveGeneratorTest {
         assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(7, 1))));
         assertTrue(moves.contains(Move.normal(new Position(4, 4), new Position(7, 7))));
     }
+
+    @Test
+    void testIsKingInCheck_rookAttacksKing_returnsTrue() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE)); // e1
+        board.setPiece(new Position(0, 4), new Piece(PieceType.ROOK, Color.BLACK)); // e8
+
+        MoveGenerator generator = new MoveGenerator();
+
+        assertTrue(generator.isKingInCheck(board, Color.WHITE));
+    }
+
+    @Test
+    void testIsKingInCheck_blockedAttack_returnsFalse() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE)); // e1
+        board.setPiece(new Position(0, 4), new Piece(PieceType.ROOK, Color.BLACK)); // e8
+        board.setPiece(new Position(4, 4), new Piece(PieceType.BISHOP, Color.WHITE)); // e4 blocks
+
+        MoveGenerator generator = new MoveGenerator();
+
+        assertFalse(generator.isKingInCheck(board, Color.WHITE));
+    }
+
+    @Test
+    void testGenerateLegalMoves_kingCannotMoveIntoCheck_filtersIllegalKingMove() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE)); // e1
+        board.setPiece(new Position(5, 4), new Piece(PieceType.ROOK, Color.BLACK)); // e3 attacks e2
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> legalMoves = generator.generateLegalMoves(board, state);
+
+        assertFalse(legalMoves.contains(Move.normal(new Position(7, 4), new Position(6, 4)))); // e1 -> e2
+    }
+
+    @Test
+    void testGenerateLegalMoves_pinnedPieceCannotMoveAndExposeKing() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE)); // e1
+        board.setPiece(new Position(6, 4), new Piece(PieceType.ROOK, Color.WHITE)); // e2
+        board.setPiece(new Position(0, 4), new Piece(PieceType.ROOK, Color.BLACK)); // e8
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> legalMoves = generator.generateLegalMoves(board, state);
+
+        assertFalse(legalMoves.contains(Move.normal(new Position(6, 4), new Position(6, 3)))); // e2 -> d2
+    }
+
+    @Test
+    void testGenerateLegalMoves_allowsMoveThatResolvesCheck() {
+        Board board = Board.empty();
+        board.setPiece(new Position(7, 4), new Piece(PieceType.KING, Color.WHITE)); // e1
+        board.setPiece(new Position(0, 4), new Piece(PieceType.ROOK, Color.BLACK)); // e8
+        board.setPiece(new Position(6, 3), new Piece(PieceType.BISHOP, Color.WHITE)); // d2
+
+        GameState state = new GameState(Color.WHITE, false, false, false, false, null);
+        MoveGenerator generator = new MoveGenerator();
+
+        List<Move> legalMoves = generator.generateLegalMoves(board, state);
+
+        assertTrue(legalMoves.contains(Move.normal(new Position(6, 3), new Position(5, 4)))); // d2 -> e3 blocks
+    }
 }
