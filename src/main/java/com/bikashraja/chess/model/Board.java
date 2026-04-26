@@ -106,7 +106,7 @@ public final class Board {
      * Applies a move and returns a new Board.
      * Does NOT modify the current board.
      */
-    public Board makeMove(Move move, GameState state) {
+    public Board makeMove(Move move) {
         Board newBoard = this.copy();
 
         switch (move.getMoveType()) {

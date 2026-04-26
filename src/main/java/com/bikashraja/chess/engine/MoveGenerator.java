@@ -81,7 +81,7 @@ public class MoveGenerator {
         Color movingColor = state.getSideToMove();
 
         for (Move move : pseudoLegalMoves) {
-            Board newBoard = board.makeMove(move, state);
+            Board newBoard = board.makeMove(move);
 
             if (!isKingInCheck(newBoard, movingColor)) {
                 legalMoves.add(move);

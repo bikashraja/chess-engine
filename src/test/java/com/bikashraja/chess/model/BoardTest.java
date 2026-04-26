@@ -106,7 +106,7 @@ class BoardTest {
         Board board = Board.initial();
         Move move = Move.normal(new Position(6, 4), new Position(4, 4)); // e2 -> e4
 
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(6, 4)));
         assertEquals(new Piece(PieceType.PAWN, Color.WHITE), newBoard.getPiece(new Position(4, 4)));
@@ -117,7 +117,7 @@ class BoardTest {
         Board board = Board.initial();
         Move move = Move.normal(new Position(6, 4), new Position(4, 4)); // e2 -> e4
 
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertEquals(new Piece(PieceType.PAWN, Color.WHITE), board.getPiece(new Position(6, 4)));
         assertNull(board.getPiece(new Position(4, 4)));
@@ -133,7 +133,7 @@ class BoardTest {
         board.setPiece(new Position(3, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d5
 
         Move move = Move.normal(new Position(4, 4), new Position(3, 3));
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(4, 4)));
         assertEquals(new Piece(PieceType.PAWN, Color.WHITE), newBoard.getPiece(new Position(3, 3)));
@@ -150,7 +150,7 @@ class BoardTest {
                 PieceType.QUEEN
         );
 
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(1, 4)));
         assertEquals(
@@ -170,7 +170,7 @@ class BoardTest {
                 PieceType.QUEEN
         );
 
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertEquals(
                 new Piece(PieceType.PAWN, Color.WHITE),
@@ -189,7 +189,7 @@ class BoardTest {
         board.setPiece(new Position(7, 7), new Piece(PieceType.ROOK, Color.WHITE)); // h1
 
         Move move = Move.castling(new Position(7, 4), new Position(7, 6)); // e1 -> g1
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(7, 4)));
         assertNull(newBoard.getPiece(new Position(7, 7)));
@@ -204,7 +204,7 @@ class BoardTest {
         board.setPiece(new Position(7, 0), new Piece(PieceType.ROOK, Color.WHITE)); // a1
 
         Move move = Move.castling(new Position(7, 4), new Position(7, 2)); // e1 -> c1
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(7, 4)));
         assertNull(newBoard.getPiece(new Position(7, 0)));
@@ -219,7 +219,7 @@ class BoardTest {
         board.setPiece(new Position(0, 7), new Piece(PieceType.ROOK, Color.BLACK)); // h8
 
         Move move = Move.castling(new Position(0, 4), new Position(0, 6)); // e8 -> g8
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(0, 4)));
         assertNull(newBoard.getPiece(new Position(0, 7)));
@@ -234,7 +234,7 @@ class BoardTest {
         board.setPiece(new Position(0, 0), new Piece(PieceType.ROOK, Color.BLACK)); // a8
 
         Move move = Move.castling(new Position(0, 4), new Position(0, 2)); // e8 -> c8
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(0, 4)));
         assertNull(newBoard.getPiece(new Position(0, 0)));
@@ -249,7 +249,7 @@ class BoardTest {
         board.setPiece(new Position(7, 7), new Piece(PieceType.ROOK, Color.WHITE)); // h1
 
         Move move = Move.castling(new Position(7, 4), new Position(7, 6)); // e1 -> g1
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertEquals(new Piece(PieceType.KING, Color.WHITE), board.getPiece(new Position(7, 4)));
         assertEquals(new Piece(PieceType.ROOK, Color.WHITE), board.getPiece(new Position(7, 7)));
@@ -265,7 +265,7 @@ class BoardTest {
         board.setPiece(new Position(3, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d5
 
         Move move = Move.enPassant(new Position(3, 4), new Position(2, 3)); // e5 -> d6
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(3, 4)));
         assertNull(newBoard.getPiece(new Position(3, 3)));
@@ -279,7 +279,7 @@ class BoardTest {
         board.setPiece(new Position(4, 4), new Piece(PieceType.PAWN, Color.WHITE)); // e4
 
         Move move = Move.enPassant(new Position(4, 3), new Position(5, 4)); // d4 -> e3
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertNull(newBoard.getPiece(new Position(4, 3)));
         assertNull(newBoard.getPiece(new Position(4, 4)));
@@ -293,7 +293,7 @@ class BoardTest {
         board.setPiece(new Position(3, 3), new Piece(PieceType.PAWN, Color.BLACK)); // d5
 
         Move move = Move.enPassant(new Position(3, 4), new Position(2, 3)); // e5 -> d6
-        Board newBoard = board.makeMove(move, GameState.initial());
+        Board newBoard = board.makeMove(move);
 
         assertEquals(new Piece(PieceType.PAWN, Color.WHITE), board.getPiece(new Position(3, 4)));
         assertEquals(new Piece(PieceType.PAWN, Color.BLACK), board.getPiece(new Position(3, 3)));
