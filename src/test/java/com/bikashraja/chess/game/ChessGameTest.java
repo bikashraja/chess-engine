@@ -137,4 +137,11 @@ class ChessGameTest {
                 null
         );
     }
+
+    @Test
+    void getStatus_returnsOngoingWhenLegalMovesExist() {
+        ChessGame game = new ChessGame(Board.initial(), GameState.initial());
+
+        assertEquals(GameStatus.ONGOING, game.getStatus());
+    }
 }
