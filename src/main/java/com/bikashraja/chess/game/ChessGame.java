@@ -74,6 +74,19 @@ public class ChessGame {
         return getLegalMoves().contains(move);
     }
 
+    public GameStatus getStatus() {
+        List<Move> legalMoves = getLegalMoves();
+
+        if (!legalMoves.isEmpty()) {
+            return GameStatus.ONGOING;
+        }
+
+        Color sideToMove = gameState.getSideToMove();
+        boolean inCheck = moveGenerator.isKingInCheck(board, sideToMove);
+
+        return inCheck ? GameStatus.CHECKMATE : GameStatus.STALEMATE;
+    }
+
     /**
      * Applies a legal move to the game.
      *
