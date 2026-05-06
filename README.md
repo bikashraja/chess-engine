@@ -5,7 +5,7 @@
 ![Tests](https://img.shields.io/badge/Tests-JUnit%205-green)
 ![Status](https://img.shields.io/badge/Status-In%20Progress-yellow)
 
-A command-line chess engine written in Java with a focus on clean architecture, rule-correct move generation, and upcoming AI search using Minimax with alpha-beta pruning.
+A command-line chess engine written in Java with a focus on clean architecture, rule-correct move generation, and AI search using Minimax with planned alpha-beta pruning.
 
 ---
 
@@ -31,29 +31,30 @@ The project is a hands-on way to practice software engineering through a complex
 - [x] Immutable move and piece objects
 - [x] Board copying and move application
 - [x] Legal move generation
-- [x] Check detection
+- [x] Check / checkmate / stalemate detection
+- [x] Full game state transitions
 - [x] Special moves:
-    - [x] Castling
-    - [x] Promotion
-    - [x] En Passant
-- [x] Unit tests for core model and board logic
-- [x] `ChessGame` orchestration class (foundation)
+  - [x] Castling
+  - [x] Promotion
+  - [x] En Passant
+- [x] Unicode CLI board rendering
+- [x] Coordinate move parsing (`e2e4`)
+- [x] Interactive CLI gameplay loop
+- [x] Basic material evaluator
+- [x] Unit tests for core model, board logic, and game flow
 
 ### In Progress
 
-- [ ] Full game state transitions after moves
-- [ ] Checkmate / stalemate detection
-- [ ] CLI gameplay loop
-- [ ] Position evaluation
 - [ ] Minimax search
 - [ ] Alpha-beta pruning
+- [ ] AI move selection
 
 ### Planned / Optional
 
 - [ ] Move ordering
 - [ ] Transposition table
 - [ ] FEN parser / custom positions
-- [ ] Better evaluation heuristics
+- [ ] Better positional evaluation heuristics
 
 ### Project Structure
 ```
@@ -79,4 +80,35 @@ src/main/java/com/bikashraja/chess/
 
 ```bash
 mvn clean install
+mvn exec:java
+```
+
+---
+
+## Example Gameplay
+
+```text
+8 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
+7 ♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟
+6 . . . . . . . .
+5 . . . . . . . .
+4 . . . . . . . .
+3 . . . . . . . .
+2 ♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙
+1 ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖
+  a b c d e f g h
+
+WHITE to move: e2e4
+
+8 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
+7 ♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟
+6 . . . . . . . .
+5 . . . . . . . .
+4 . . . . ♙ . . .
+3 . . . . . . . .
+2 ♙ ♙ ♙ ♙ . ♙ ♙ ♙
+1 ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖
+  a b c d e f g h
+
+BLACK to move:
 ```
