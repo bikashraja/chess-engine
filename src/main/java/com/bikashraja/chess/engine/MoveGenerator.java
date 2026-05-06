@@ -386,7 +386,11 @@ public class MoveGenerator {
                     break;
                 }
 
-                return piece.getType() == primaryType || piece.getType() == secondaryType;
+                if (piece.getType() == primaryType || piece.getType() == secondaryType) {
+                    return true;
+                }
+
+                break;
             }
         }
 
